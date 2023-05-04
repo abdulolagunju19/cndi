@@ -69,6 +69,8 @@ interface TemplatePrompt {
   message: string;
   type: TemplatePromptTypeNames;
   default: string;
+  value?: string;
+  templated?: boolean;
   comment?: string;
   hint?: string;
   transform?: (value: string) => string;
@@ -101,6 +103,17 @@ interface CNDIGeneratedValues {
   sealedSecretsKeys: SealedSecretsKeys;
   terraformStatePassphrase: string;
   argoUIAdminPassword: string;
+}
+
+function processRawVal(rawVal: string): string {
+  // process templated string
+  const beginCurly = '{{';
+  const endCurly = '}}';
+  const whitespace = ' ';
+
+  
+
+  return 
 }
 
 export default async function useTemplate(
@@ -180,22 +193,18 @@ export default async function useTemplate(
     templateObject?.env?.prompts || [];
 
   for (const p of templateEnvPromptDefinitions) {
-    if (p.type === "Comment") {
+    // if an env prompt entry has a value, it should be handled without prompting
+    if(p.value) {
+
+      const rawVal = p.value;
+
+
+      const line = { value: {[p.name]: p.value }} as EnvValueEntry;
+      templateEnvLines.push(line as EnvValueEntry);
+      continue;
+    } else if (p.type === "Comment") {
       const { comment } = p;
       templateEnvLines.push({ comment } as EnvCommentEntry);
-      continue;
-    } else if (opt.interactive) {
-      // deno-lint-ignore no-explicit-any
-      const P = getPromptModuleForType(p.type) as any;
-      const v = await P?.prompt({
-        ...p,
-        message: ccolors.prompt(p.message),
-      });
-      templateEnvLines.push({ value: { [p.name]: v } } as EnvValueEntry);
-    } else {
-      templateEnvLines.push(
-        { value: { [p.name]: p.default } } as EnvValueEntry,
-      );
     }
   }
 

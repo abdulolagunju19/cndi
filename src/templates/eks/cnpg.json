@@ -13,12 +13,29 @@
         "message": "Please enter the domain name you want argocd to be accessible on:",
         "type": "Input"
       },
-
       {
         "message": "Please enter the email address you want to use for lets encrypt:",
         "default": "admin@example.com",
         "name": "letsEncryptClusterIssuerEmailAddress",
         "type": "Input"
+      },
+      {
+        "message": "Please enter the name for your postgresql cluster:",
+        "default": "cnpg-cluster",
+        "name": "cnpgClusterName",
+        "type": "Input"
+      },
+      {
+        "message" : "Please enter the username for your postgresql cluster:",
+        "name" : "postgresqlUser",
+        "default" : "admin",
+        "type" : "Input"
+      },
+      {
+        "message" : "Please enter the username for your postgresql database:",
+        "name" : "postgresqlDatabase",
+        "default" : "cnpg-db",
+        "type" : "Input"
       }
     ],
     "template": {
@@ -71,7 +88,7 @@
             },
             "postgresql": {
               "pg_hba": [
-                "host $.cndi.prompts.responses.POSTGRESQL_DB $.cndi.prompts.responses.POSTGRESQL_USER all password"
+                "host {{ $.cndi.prompts.responses.POSTGRESQL_DB }} {{ $.cndi.prompts.responses.POSTGRESQL_USER }} all password"
               ]
             },
             "bootstrap": {
@@ -163,7 +180,7 @@
             ],
             "rules": [
               {
-                "host": "$.cndi.prompts.responses.argocdDomainName",
+                "host": "{{ $.cndi.prompts.responses.argocdDomainName }}",
                 "http": {
                   "paths": [
                     {
@@ -203,58 +220,61 @@
         "comment": "PostgreSQL connection parameters"
       },
       {
-        "message": "Please enter the name of the postgresql database",
-        "default": "cnpg-db",
+        // "message": "Please enter the name of the postgresql database",
+        // "default": "cnpg-db",
         "name": "POSTGRESQL_DB",
-        "type": "Input"
+        "value": "{{ $.cndi.prompts.responses.postgresqlDb }}"
+        // "type": "Input"
       },
       {
-        "message": "Please enter the postgresql user you want to use for your postgresql database:",
-        "default": "admin",
+        // "message": "Please enter the postgresql user you want to use for your postgresql database:",
+        "value": "{{ $.cndi.prompts.responses.postgresqlUser }}",
         "name": "POSTGRESQL_USER",
-        "type": "Input"
+        // "type": "Input"
       },
       {
-        "message": "Please enter the postgresql password you want to use for your postgresql database:",
-        "default": "password",
+        // "message": "Please enter the postgresql password you want to use for your postgresql database:",
         "name": "POSTGRESQL_PASSWORD",
-        "type": "Input"
+        "value": "{{ $.cndi.prompts.responses.postgresqlPassword }}",
+        // "type": "Secret"
       },
       {
-        "message": "Please enter the postgresql protocol you want to use for your postgresql database:",
+        // "message": "Please enter the postgresql protocol you want to use for your postgresql database:",
         "name": "POSTGRESQL_PROTOCOL",
-        "default": "postgresql",
-        "type": "Input"
+        "value" : "postgresql",
+        // "type": "None"
       },
       {
-        "message": "Please enter the postgresql host you want to use for your postgresql database:",
+        // "message": "Please enter the postgresql host you want to use for your postgresql database:",
         "name": "POSTGRESQL_HOST",
-        "default": "cnpg-cluster-rw",
-        "type": "Input"
+        "value": "{{ $.cndi.prompts.responses.cnpgClusterName }}-rw"
+        // "type": "None"
       },
       {
-        "message": "Please enter the postgresql port you want to use for your postgresql database:",
-        "name": "POSTGRESQL_PORT ",
-        "default": "5432",
-        "type": "Input"
+        // "message": "Please enter the postgresql port you want to use for your postgresql database:",
+        "name": "POSTGRESQL_PORT",
+        "value": "5432"
+        // "type": "None"
       },
       {
-        "message": "Please enter the postgresql ssl mode you want to use for your postgresql database:",
+        // "message": "Please enter the postgresql ssl mode you want to use for your postgresql database:",
         "name": "POSTGRESQL_SSLMODE",
-        "default": "disable",
-        "type": "Input"
+        "value": "disable",
+        // "type": "None""
       },
       {
-        "message": "Please enter the postgresql connection string you want to use to connect your postgresql database:",
+        // "message": "Please enter the postgresql connection string you want to use to connect your postgresql database:",
         "name": "POSTGRESQL_CONNECTION_STRING",
-        "default": "$POSTGRESQL_PROTOCOL://$POSTGRESQL_USER:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DB?$POSTGRESQL_SSLMODE",
-        "type": "Input"
+        "value": "postgresql://{{ $.cndi.prompts.responses.postgresqlUser }}:{{ $.cndi.prompts.responses.postgresqlPassword }}@{{ $.cndi.prompts.responses.cnpgClusterName }}-rw:5432/{{ $.cndi.prompts.responses.postgresqlDb }}?sslmode=disable",
+        // "value": "$POSTGRESQL_PROTOCOL://$POSTGRESQL_USER:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOST:$POSTGRESQL_PORT/$POSTGRESQL_DB?$POSTGRESQL_SSLMODE",
+        // "templated": true
+        // "type": "Input"
       },
       {
-        "message": "Please enter the postgresql cluster superuser you want to use for your postgresql cluster:",
+        // "message": "Please enter the postgresql cluster superuser you want to use for your postgresql cluster:",
         "name": "POSTGRESQL_CLUSTER_SUPERUSER",
-        "default": "postgres",
-        "type": "Input"
+        "value": "postgres",
+        // "type": "None"
       }
     ]
   },

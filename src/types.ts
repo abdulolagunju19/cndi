@@ -188,6 +188,7 @@ interface EnvCommentEntry {
 }
 interface EnvValueEntry {
   value: { [key: string]: string };
+  templated?: boolean;
 }
 
 type EnvLines = Array<EnvCommentEntry | EnvValueEntry>;
