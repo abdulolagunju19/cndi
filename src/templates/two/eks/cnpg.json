@@ -89,8 +89,8 @@
             },
             "bootstrap": {
               "initdb": {
-                "database": "https://{{ $.cndi.prompts.responses.postgresqlDb }}",
-                "owner": "https://{{ $.cndi.prompts.responses.postgresqlUser }}",
+                "database": "{{ $.cndi.prompts.responses.postgresqlDb }}",
+                "owner": "{{ $.cndi.prompts.responses.postgresqlUser }}",
                 "secret": {
                   "name": "cnpg-database-user-auth-secret"
                 }
