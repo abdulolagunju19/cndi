@@ -73,9 +73,7 @@
             "name": "cnpg-cluster",
             "namespace": "airflow",
             "annotations": {
-              "argocd.argoproj.io/sync-options": {
-                "SkipDryRunOnMissingResource": true
-              }
+              "argocd.argoproj.io/sync-options": "SkipDryRunOnMissingResource=true"
             }
           },
           "spec": {
